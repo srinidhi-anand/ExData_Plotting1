@@ -1,0 +1,19 @@
+
+conn <- file("household_power_consumption.txt")
+dataset <- read.csv(conn, sep=";", header=TRUE, stringsAsFactors=FALSE)
+dataset$Date <- strptime(as.character(dataset$Date),"%d/%m/%Y")
+dataset$Date <- format(dataset$Date,"%Y-%m-%d")
+myfunc <- function(x,y){dataset[dataset$Date >= x & dataset$Date <= y,]}
+DATE1 <- as.Date("2007-02-01")
+DATE2 <- as.Date("2007-02-02")
+Test_data <- myfunc(DATE1,DATE2)  
+
+Test_data$DateTime <-format(seq.Date(as.Date("2007-02-01"), by = 'day', len = 3), "%a")
+Test_data$WeekDay <- as.POSIXct(paste(Test_data$Date, Test_data$Time), format="%Y-%m-%d %H:%M:%S")
+png("plot3.png", width = 480, height = 480)
+
+plot(Test_data$WeekDay, as.numeric(Test_data$Sub_metering_1), xlab ="DateTime", ylab="Energy Sub Metering", type="l",col="black")
+lines(Test_data$WeekDay, as.numeric(Test_data$Sub_metering_2), xlab ="DateTime", ylab="Energy Sub Metering", type="l",col="red")
+lines(Test_data$WeekDay, as.numeric(Test_data$Sub_metering_3), xlab ="DateTime", ylab="Energy Sub Metering", type="l",col="blue")
+legend("topright", legend=c("Sub_metering_1","Sub_metering_2","Sub_metering_3"), lwd=c(2,2,2), col=c("black","red","blue"))
+dev.off()
